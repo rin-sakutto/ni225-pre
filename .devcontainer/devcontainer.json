@@ -1,46 +1,52 @@
 {
-    "name": "React + Spring Boot App",
-    // ベースイメージを選択。Debian/Ubuntuベースが一般的
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-  
-    "features": {
-      // Node.js (React用) をインストール
-      "ghcr.io/devcontainers/features/node:1": {
-        "version": "lts" // LTSバージョンを指定 (例: 18, 20)
+  "name": "React + Spring Boot App with Docker DB",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+
+  "features": {
+    // Docker環境をCodespaces内にセットアップ (これは必須)
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    // Node.js
+    "ghcr.io/devcontainers/features/node:1": { "version": "lts" },
+    // Java/Gradle
+    "ghcr.io/devcontainers/features/java:1": { "version": "17", "installMaven": false, "installGradle": true }
+  },
+
+  // runServices は使わない
+  // "runServices": ["mysql_db"],
+
+  // 開発コンテナを特定のネットワークに参加させる runArgs は一旦コメントアウト
+  // "overrideCommand": false,
+  // "runArgs": [
+  //   "--network=ni225-pre_backend_network"
+  // ],
+
+  // コンテナ接続後に docker compose (ハイフンなし、v2) up を実行
+  // Docker CLI v2 に含まれる compose plugin を使う
+  "postAttachCommand": {
+      // docker-compose.yml がルートにあることを ${containerWorkspaceFolder} で指定
+      "server": "docker compose -f \"${containerWorkspaceFolder}/docker-compose.yml\" up -d mysql_db"
+   },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // 必要に応じて設定を追加
       },
-      // Java & Maven (Spring Boot用) をインストール
-      "ghcr.io/devcontainers/features/java:1": {
-        "version": "17", // Spring Bootが要求するJDKバージョンを指定
-        "installGradle": "true" // またはGradleを使う場合は "true"
-      }
-      // KotlinはJDKがあれば動作しますが、必要に応じて追加設定
-    },
-  
-    // 推奨されるVS Code拡張機能
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          // React / JavaScript / TypeScript
-          "dbaeumer.vscode-eslint",
-          "esbenp.prettier-vscode",
-          "ms-vscode.vscode-typescript-next", // TypeScriptを使う場合
-          // Java / Spring Boot / Kotlin
-          "vscjava.vscode-java-pack", // Java Extension Pack
-          "vmware.vscode-spring-boot", // Spring Boot Extension Pack
-          "fwcd.kotlin" // Kotlin Language support
-        ]
-      }
-    },
-  
-    // 転送するポート (React: 3000, Spring Boot: 8080 が一般的)
-    "forwardPorts": [3000, 8080],
-  
-    // コンテナ作成後に実行するコマンド (例: 依存関係のインストール)
-    // "postCreateCommand": "cd frontend && npm install && cd ../backend && ./mvnw package"
-    // ↑必要に応じてコメント解除・調整
-  
-    // Codespaceのアイドルタイムアウト設定など (オプション)
-    // "runArgs": ["--init"],
-    // "shutdownAction": "stop"
-  }
-  
+      "extensions": [
+        // 拡張機能リストは変更なし
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot",
+        "fwcd.kotlin",
+        "vscjava.vscode-gradle"
+      ]
+    }
+  },
+
+  "forwardPorts": [3000, 8080, 3307], // 転送ポートは変更なし
+
+  // Codespace停止時に docker-compose で起動したコンテナも停止させる
+  "shutdownAction": "stopCompose"
+}

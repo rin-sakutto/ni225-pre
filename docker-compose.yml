@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db_container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword # 開発用パスワード
+      MYSQL_DATABASE: myappdb
+      MYSQL_USER: myappuser
+      MYSQL_PASSWORD: myapppassword # 開発用パスワード
+    ports:
+      - '3307:3306' # ローカル接続用
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    # --- このサービスが使うネットワークを指定 ---
+    networks:
+      - backend_network # 下で定義するネットワーク名
+    # --------------------------------------
+
+volumes:
+  mysql_data:
+    driver: local
+
+# --- ネットワークを定義 ---
+networks:
+  backend_network: # 任意のネットワーク名 (例: backend_network, app_net など)
+    driver: bridge
+    name: backend_network
+# ----------------------
