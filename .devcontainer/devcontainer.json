@@ -1,0 +1,46 @@
+{
+    "name": "React + Spring Boot App",
+    // ベースイメージを選択。Debian/Ubuntuベースが一般的
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  
+    "features": {
+      // Node.js (React用) をインストール
+      "ghcr.io/devcontainers/features/node:1": {
+        "version": "lts" // LTSバージョンを指定 (例: 18, 20)
+      },
+      // Java & Maven (Spring Boot用) をインストール
+      "ghcr.io/devcontainers/features/java:1": {
+        "version": "17", // Spring Bootが要求するJDKバージョンを指定
+        "installGradle": "true" // またはGradleを使う場合は "true"
+      }
+      // KotlinはJDKがあれば動作しますが、必要に応じて追加設定
+    },
+  
+    // 推奨されるVS Code拡張機能
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          // React / JavaScript / TypeScript
+          "dbaeumer.vscode-eslint",
+          "esbenp.prettier-vscode",
+          "ms-vscode.vscode-typescript-next", // TypeScriptを使う場合
+          // Java / Spring Boot / Kotlin
+          "vscjava.vscode-java-pack", // Java Extension Pack
+          "vmware.vscode-spring-boot", // Spring Boot Extension Pack
+          "fwcd.kotlin" // Kotlin Language support
+        ]
+      }
+    },
+  
+    // 転送するポート (React: 3000, Spring Boot: 8080 が一般的)
+    "forwardPorts": [3000, 8080],
+  
+    // コンテナ作成後に実行するコマンド (例: 依存関係のインストール)
+    // "postCreateCommand": "cd frontend && npm install && cd ../backend && ./mvnw package"
+    // ↑必要に応じてコメント解除・調整
+  
+    // Codespaceのアイドルタイムアウト設定など (オプション)
+    // "runArgs": ["--init"],
+    // "shutdownAction": "stop"
+  }
+  
